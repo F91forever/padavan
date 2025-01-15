@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [mipsel-linux-uclibc, mipsel-linux-musl, mipsel-linux-uclibc-gcc7, mipsel-linux-musl-gcc7, mipsel-linux-uclibc-gcc10, mipsel-linux-musl-gcc10]
+        target: [mipsel-linux-musl]
     steps:
       - uses: actions/checkout@main
       - name: Prepare environment
