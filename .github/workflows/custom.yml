@@ -63,7 +63,7 @@ on:
         - XY-C1
         - ZTE-E8820S
         - ZTE-E8820V2
-        default: K2P
+        default: CR660x
       toolchain:
         description: 'Select the compilation toolchain'
         required: true
@@ -87,7 +87,7 @@ on:
       cpufreq:
         description: 'CPU Frequency (MHz)'
         type: boolean
-        default: false
+        default: true
       mt7621_oc:
         description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
         type: choice
