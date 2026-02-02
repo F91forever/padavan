@@ -266,7 +266,6 @@ EEE
 start_adg(){
   mkdir -p /tmp/AdGuardHome
 	mkdir -p /etc/storage/AdGuardHome
- 	mount -o remount,size=40M /tmp
 	getconfig
 	change_dns
 	set_iptable
