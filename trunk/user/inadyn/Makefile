@@ -1,11 +1,11 @@
 include $(ROOTDIR)/rules.mk
 
 PKG_NAME:=inadyn
-PKG_VERSION:=2.12.0
+PKG_VERSION:=2.13.0
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://github.com/troglobit/inadyn/releases/download/v$(PKG_VERSION)
-PKG_HASH:=e64c4386b6f42bbace589b847f22823a755b59f14a277a5f556fef0d99069245
+PKG_HASH:=d08ca63a35896f2a809ba9b704da16ec6812b94dd410e7b3ea536a16d93860c2
 
 PKG_FIXUP:=autoreconf
 
