@@ -65,8 +65,15 @@ http:
   pprof:
     port: 6060
     enabled: false
+  doh:
+    routes:
+      - GET /dns-query
+      - POST /dns-query
+      - GET /dns-query/{ClientID}
+      - POST /dns-query/{ClientID}
+    insecure_enabled: false
   address: 0.0.0.0:3030
-  session_ttl: 720h
+  session_ttl: 30d
 users:
   - name: admin
     password: $2a$10$aA3rVg6z5A10dr8o9ZpTw.RYfex.wAilzbsz3JFLtDoK5N1.j0jqu
@@ -92,7 +99,7 @@ dns:
     - 119.29.29.29
   fallback_dns:
     - 119.29.29.29
-  upstream_mode: parallel
+  upstream_mode: load_balance
   fastest_timeout: 1s
   allowed_clients: []
   disallowed_clients: []
@@ -103,10 +110,13 @@ dns:
   trusted_proxies:
     - 127.0.0.0/8
     - ::1/128
+  cache_enabled: false
   cache_size: 0
   cache_ttl_min: 0
   cache_ttl_max: 0
   cache_optimistic: false
+  cache_optimistic_answer_ttl: 30s
+  cache_optimistic_max_age: 12h
   bogus_nxdomain: []
   aaaa_disabled: false
   enable_dnssec: false
@@ -129,6 +139,8 @@ dns:
   use_http3_upstreams: false
   serve_plain_dns: true
   hostsfile_enabled: true
+  pending_requests:
+    enabled: true
 tls:
   enabled: false
   server_name: ""
@@ -138,7 +150,6 @@ tls:
   port_dns_over_quic: 853
   port_dnscrypt: 0
   dnscrypt_config_file: ""
-  allow_unencrypted_doh: false
   certificate_chain: ""
   private_key: ""
   certificate_path: ""
@@ -150,41 +161,48 @@ querylog:
   interval: 1h
   size_memory: 1000
   enabled: true
+  ignored_enabled: false
   file_enabled: true
 statistics:
   dir_path: ""
   ignored: []
-  interval: 12h
+  interval: 1d
   enabled: true
+  ignored_enabled: false
 filters:
   - enabled: true
-    url: https://raw.githubusercontent.com/BlueSkyXN/AdGuardHomeRules/master/skyrules.txt
-    name: Blue
-    id: 1739238283
+    url: https://raw.githubusercontent.com/smdx/AdGHome_Filter_List/refs/heads/main/AdGHome-PCDN.txt
+    name: pcdn
+    id: 1783437689
   - enabled: true
-    url: https://easylist.to/easylist/easyprivacy.txt
-    name: easyprivacy
-    id: 1739268640
+    url: https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/AWAvenue-Ads-Rule.txt
+    name: qiufeng
+    id: 1783437691
   - enabled: true
-    url: https://easylist-downloads.adblockplus.org/easylistchina.txt
-    name: easylistchina
-    id: 1739268641
-  - enabled: true
-    url: https://raw.githubusercontent.com/AdguardTeam/FiltersRegistry/master/filters/filter_11_Mobile/filter.txt
-    name: mobile
-    id: 1739268642
+    url: https://gcore.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockdnslite.txt
+    name: adblockfilters
+    id: 1783437709
 whitelist_filters:
   - enabled: true
-    url: https://raw.githubusercontent.com/BlueSkyXN/AdGuardHomeRules/master/ok.txt
-    name: ok
-    id: 1738938865
+    url: https://raw.githubusercontent.com/miaoermua/AdguardFilter/main/whitelist.txt
+    name: white
+    id: 1781955446
+  - enabled: true
+    url: https://raw.githubusercontent.com/smdx/AdGHome_Filter_List/refs/heads/main/White-List.txt
+    name: pcdn_w
+    id: 1783437690
 user_rules:
   - '@@||ii.gdt.qq.com^$important'
-  - '@@||sdkreport.e.qq.com^$important'
-  - '@@||oth.bls.mdt.qq.com^$important'
-  - '@@||tangram.e.qq.com^$important'
   - '@@||adsmind.gdtimg.com^$important'
+  - '@@||signaltower.gdt.qq.com^$important'
+  - '@@||vr.gdt.qq.com^$important'
   - '@@||pgdt.gtimg.cn^$important'
+  - '@@||oth.eve.mdt.qq.com^$important'
+  - '@@||v2ii.gdt.qq.com^$important'
+  - '@@||ad.tencentmusic.com^$important'
+  - '@@||adstats.tencentmusic.com^$important'
+  - '@@||open.kwaizt.com^$important'
+  - '@@||c.youdao.com^$important'
   - ""
 dhcp:
   enabled: false
@@ -230,9 +248,10 @@ filtering:
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576
   cache_time: 30
-  filters_update_interval: 24
+  filters_update_interval: 1
   blocked_response_ttl: 60
   filtering_enabled: true
+  rewrites_enabled: true
   parental_enabled: false
   safebrowsing_enabled: false
   protection_enabled: true
@@ -257,7 +276,7 @@ os:
   group: ""
   user: ""
   rlimit_nofile: 0
-schema_version: 29
+schema_version: 34
 EEE
 	  chmod 755 "$adg_file"
   fi
