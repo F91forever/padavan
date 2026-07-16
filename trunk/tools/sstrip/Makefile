@@ -1,13 +1,18 @@
-#  Makefile for sstrip
+include $(ROOTDIR)/rules.mk
 
-CC = gcc
-CFLAGS = -Wall -Wextra -I ./elfrw
+PKG_NAME:=sstrip
 
-sstrip: sstrip.c ./elfrw/libelfrw.a
+include $(INCLUDE_DIR)/package.mk
 
-./elfrw/libelfrw.a:
-	$(MAKE) -C ./elfrw libelfrw.a
+define Build/Compile
+	@echo "==> Compiling $(PKG_NAME)..."
+	+$(MAKE) -C $(PKG_BUILD_DIR)/elfrw libelfrw.a
+	$(CC) $(CFLAGS) -c $(PKG_BUILD_DIR)/sstrip.c -o $(PKG_BUILD_DIR)/sstrip.o
+	$(CC) $(LDFLAGS) -o $(PKG_BUILD_DIR)/sstrip $(PKG_BUILD_DIR)/sstrip.o $(PKG_BUILD_DIR)/elfrw/libelfrw.a
 
-clean:
-	for dir in elfrw ; do $(MAKE) -C$$dir clean ; done
-	rm -f sstrip
+	@echo "==> Installing $(PKG_NAME) to $(ROOTDIR)/tools/sstrip..."
+	$(INSTALL_DIR) $(ROOTDIR)/tools/sstrip
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/sstrip $(ROOTDIR)/tools/sstrip/
+endef
+
+$(eval $(call BuildPackage,sstrip))

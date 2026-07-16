@@ -167,6 +167,11 @@ do_binutils_backend() {
         extra_config+=("--disable-multilib")
     fi
 
+    # gprofng is unavailable for non-glibc build/hosts
+    if [ "${CT_BINUTILS_GPROFNG}" != "y" ]; then
+        extra_config+=("--disable-gprofng")
+    fi
+
     # Disable gdb when building from the binutils-gdb repository.
     extra_config+=("--disable-sim")
     extra_config+=("--disable-gdb")
@@ -329,9 +334,13 @@ do_binutils_for_target() {
     local -a install_targets
     local t
 
-    [ "${CT_BINUTILS_FOR_TARGET_IBERTY}"  = "y" ] && targets+=("libiberty")
     [ "${CT_BINUTILS_FOR_TARGET_BFD}"     = "y" ] && targets+=("bfd")
     [ "${CT_BINUTILS_FOR_TARGET_OPCODES}" = "y" ] && targets+=("opcodes")
+
+    # libiberty should be installed after opcodes
+    # because of this bug: https://sourceware.org/bugzilla/show_bug.cgi?id=34337
+    [ "${CT_BINUTILS_FOR_TARGET_IBERTY}"  = "y" ] && targets+=("libiberty")
+
     for t in "${targets[@]}"; do
         build_targets+=("all-${t}")
         install_targets+=("install-${t}")

@@ -1,10 +1,10 @@
 include $(ROOTDIR)/rules.mk
 
 PKG_NAME := squashfs
-PKG_VERSION := 4.7
+PKG_VERSION := 4.7.5
 PKG_SOURCE := squashfs-tools-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL := https://github.com/plougher/squashfs-tools/archive/refs/tags/$(PKG_VERSION)
-PKG_HASH := f1605ef720aa0b23939a49ef4491f6e734333ccc4bda4324d330da647e105328
+PKG_HASH := 547b7b7f4d2e44bf91b6fc554664850c69563701deab9fd9cd7e21f694c88ea6
 PKG_BUILD_DIR := $(BUILD_DIR)/squashfs-tools-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk

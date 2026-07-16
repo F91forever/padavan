@@ -647,6 +647,7 @@ do_gcc_core_backend() {
     # miscompile or outright fail.
     CT_DoExecLog CFG                                   \
     CC_FOR_BUILD="${CT_BUILD}-gcc"                     \
+    CXX_FOR_BUILD="${CT_BUILD}-g++"                    \
     CFLAGS="${cflags}"                                 \
     CFLAGS_FOR_BUILD="${cflags_for_build}"             \
     CXXFLAGS="${cflags} ${cxxflags_for_build}"         \
@@ -664,6 +665,7 @@ do_gcc_core_backend() {
         --exec_prefix="${exec_prefix}"                 \
         --with-local-prefix="${CT_SYSROOT_DIR}"        \
         "${extra_config[@]}"                           \
+        --disable-libatomic                            \
         --enable-languages="${lang_list}"              \
         "${extra_user_config[@]}"
 
@@ -1176,6 +1178,10 @@ do_gcc_backend() {
         fi
     fi
 
+    if [ "${CT_CC_GCC_ENABLE_DEFAULT_PIE}" = "y" ]; then
+        extra_config+=("--enable-default-pie")
+    fi
+
     if [ "${CT_CC_GCC_ENABLE_TARGET_OPTSPACE}" = "y" ] || \
        [ "${enable_optspace}" = "yes" ]; then
         extra_config+=("--enable-target-optspace")
@@ -1307,6 +1313,7 @@ do_gcc_backend() {
     # See do_gcc_core_backend for explanation.
     CT_DoExecLog CFG                                   \
     CC_FOR_BUILD="${CT_BUILD}-gcc"                     \
+    CXX_FOR_BUILD="${CT_BUILD}-g++"                    \
     CFLAGS="${cflags}"                                 \
     CFLAGS_FOR_BUILD="${cflags_for_build}"             \
     CXXFLAGS="${cflags} ${cxxflags_for_build}"         \
