@@ -28,7 +28,6 @@ extract_test:
 
 clean:
 	rm -rf AdGuardHome
-	rm -f AdGuardHome_linux_mipsle_softfloat.tar.gz
 
 romfs:
 	$(ROMFSINST) -p +x $(THISDIR)/adguardhome.sh /usr/bin/adguardhome.sh
