@@ -39,7 +39,7 @@
 #define DHCPD_RANGE_DEF_TAG	"lan"
 #define DHCPD_HOSTS_DIR		"/etc/dnsmasq/dhcp"
 #define DHCPD_LEASE_FILE	"/tmp/dnsmasq.leases"
-#define UPNPD_LEASE_FILE	"/tmp/miniupnpd.leases"
+#define UPNPD_LEASE_FILE	"/var/log/upnp.leases"
 #define INADYN_USER_DIR		"/etc/storage/inadyn"
 
 static void
@@ -761,28 +761,19 @@ start_upnp(void)
 	fprintf(fp,
 		"ext_ifname=%s\n"
 		"listening_ip=%s\n"
-		"port=%d\n"
+		"http_port=%d\n"
 		"enable_upnp=%s\n"
-		"enable_natpmp=%s\n"
+		"enable_pcp_pmp=%s\n"
 		"upnp_forward_chain=%s\n"
 		"upnp_nat_chain=%s\n"
 		"upnp_nat_postrouting_chain=%s\n"
 		"secure_mode=%s\n"
-		"lease_file=%s\n"
-		"presentation_url=http://%s/\n"
 		"system_uptime=yes\n"
 		"notify_interval=%d\n"
 		"clean_ruleset_interval=%d\n"
 		"clean_ruleset_threshold=%d\n"
+		"lease_file=%s\n"
 		"uuid=75802409-bccb-40e7-8e6c-%02x%02x%02x%02x%02x%02x\n"
-		"friendly_name=%s\n"
-		"manufacturer_name=%s\n"
-		"manufacturer_url=%s\n"
-		"model_name=%s\n"
-		"model_description=%s\n"
-		"model_url=%s\n"
-		"model_number=%s\n"
-		"serial=%s\n"
 		"bitrate_up=%d\n"
 		"bitrate_down=%d\n"
 		"allow %d-%d %s %d-%d\n"
@@ -796,27 +787,37 @@ start_upnp(void)
 		MINIUPNPD_CHAIN_IP4_NAT,
 		MINIUPNPD_CHAIN_IP4_NAT_POST,
 		secured,
-		UPNPD_LEASE_FILE,
-		lan_url,
 		60,
 		i_clean_int,
 		i_clean_min,
+		UPNPD_LEASE_FILE,
 		lan_mac[0], lan_mac[1], lan_mac[2], lan_mac[3], lan_mac[4], lan_mac[5],
-		BOARD_DESC,
-		BOARD_VENDOR_NAME,
-		BOARD_VENDOR_URL,
-		"Wireless Router",
-		BOARD_DESC,
-		BOARD_MODEL_URL,
-		BOARD_NAME,
-		"1.0",
 		100000000,
 		100000000,
 		i_eports[0], i_eports[1], lan_class, i_iports[0], i_iports[1]);
 
 	fclose(fp);
 
-	return eval("/usr/bin/miniupnpd");
+	if (!(fp = fopen("/tmp/miniupnpd.log", "w")))
+		return errno;
+	if (access("/etc/storage/miniupnpdconf.sh", F_OK) != 0) 
+	{
+    fprintf(fp, "[start_upnp] copying miniupnpdconf.sh from /etc_ro ...\n");
+    if (system("cp /etc_ro/miniupnpdconf.sh /etc/storage/miniupnpdconf.sh") != 0)
+      fprintf(fp, "[start_upnp] ERROR: failed to copy miniupnpdconf.sh\n");
+		else
+      fprintf(fp, "[start_upnp] miniupnpdconf.sh copied successfully\n");
+	}
+
+	fprintf(fp, "[start_upnp] running /etc/storage/miniupnpdconf.sh \n");
+	int res = system("/etc/storage/miniupnpdconf.sh");
+	fprintf(fp, "[start_upnp] miniupnpdconf.sh returned %d\n", res);
+
+	fprintf(fp, "[start_upnp] launching /usr/bin/miniupnpd -f /etc/miniupnpd.conf\n");
+	res = system("miniupnpd -f /etc/miniupnpd.conf");
+	fprintf(fp, "[start_upnp] miniupnpd launch returned %d\n", res);
+	fclose(fp);
+	return res;
 }
 
 void
