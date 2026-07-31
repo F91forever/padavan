@@ -1,13 +1,21 @@
 include $(ROOTDIR)/rules.mk
 
 PKG_NAME:=readline
-PKG_VERSION:=8.2
+PKG_VERSION:=8.3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=@GNU/readline
-PKG_HASH:=3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35
+PKG_HASH:=fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 
 include $(INCLUDE_DIR)/package.mk
+
+CONFIGURE_ARGS += \
+	--enable-shared \
+	--disable-static \
+	--disable-install-examples
+
+TARGET_CFLAGS += \
+	-I$(STAGING_DIR)/include
 
 $(eval $(call BuildPackage,readline))
 
