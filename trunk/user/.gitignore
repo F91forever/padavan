@@ -7,7 +7,6 @@ httpd/httpd
 infosvr/infosvr
 lanauth/lanauth
 lldt/lld2d
-miniupnpd/miniupnpd
 mtd_write/mtd_write
 networkmap/networkmap
 nvram/nvram
